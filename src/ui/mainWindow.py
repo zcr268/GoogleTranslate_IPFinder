@@ -194,7 +194,7 @@ class MainWindow(QMainWindow):
             filename, _ = QFileDialog.getOpenFileName(self, self.tr('导入'), filter=self.SUPPORTED_INPUT_FILTERS)
             if not filename: return
             try:
-                with open(filename, 'r') as file:
+                with open(filename, 'r', encoding='locale') as file:
                     new_ips = file.read().split()
             except UnicodeDecodeError:
                 try:
@@ -484,7 +484,8 @@ class MainWindow(QMainWindow):
         event.accept()
 
     def dropEvent(self, event):
-        filename = event.mimeData().text()[8:] # [8:] is to get rid of 'file:///'
-        with open(filename, 'r') as file:
-            self._replace_ips(file.readlines())
+        if urls := event.mimeData().urls():
+            filename = urls[0].toLocalFile()
+            with open(filename, 'r', encoding='locale') as file:
+                self._replace_ips(file.readlines())
 
