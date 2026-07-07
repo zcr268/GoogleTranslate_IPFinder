@@ -2,10 +2,12 @@ name: Package Application
 
 on: [push]
 permissions:
-  id-token: "write"
-  contents: "write"
-  packages: "write"
-  pull-requests: "read"
+  id-token: write
+  contents: write
+  packages: write
+  pull-requests: read
+  attestations: write
+  artifact-metadata: write
 
 jobs:
   win-pyinstaller:
@@ -69,6 +71,11 @@ jobs:
         --exclude-module PySide6.QtUiTools
         run.py
 
+    - name: Attest build provenance
+      uses: actions/attest@v4
+      with:
+        subject-path: dist/main.exe
+
     - name: Upload package
       uses: actions/upload-artifact@v7
       with:
@@ -106,6 +113,11 @@ jobs:
         windows-icon-from-ico: resources/icons/icon.ico
         output-file: main.exe
         disable-cache: true
+
+    - name: Attest build provenance
+      uses: actions/attest@v4
+      with:
+        subject-path: build/main.exe
 
     - name: Upload package
       uses: actions/upload-artifact@v7
@@ -179,6 +191,11 @@ jobs:
       run: |
         cd dist
         zip -r9 checker.zip main.app/
+
+    - name: Attest build provenance
+      uses: actions/attest@v4
+      with:
+        subject-path: dist/checker.zip
 
     - name: Upload package
       uses: actions/upload-artifact@v7
