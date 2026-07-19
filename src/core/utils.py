@@ -43,8 +43,8 @@ async def test_ip(session, ip, host, request_format):
                                server_hostname=host,
                                headers={'Host': host},
                                allow_redirects=False,
-                               trace_request_ctx=ctx) as response:
-            await response.release()
+                               trace_request_ctx=ctx):
+            pass
         return ctx.duration
     except Exception as e:
         return (type(e).__name__, str(e))
@@ -120,7 +120,7 @@ async def read_urls_parallel(url_groups):
         try:
             for coro in asyncio.as_completed(tasks):
                 with contextlib.suppress(aiohttp.ClientError, asyncio.TimeoutError):
-                    return await coro 
+                    return await coro
         finally:
             for task in tasks:
                 if not task.done():
